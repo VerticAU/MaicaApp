@@ -33,6 +33,7 @@ router.post('/PRODA-produce-OAuth', function (req, res, next) {
         })
         .catch(error => {
             console.error(error)
+            res.status(error.response.status || 500);
             res.send(error.response.data)
         })
 
@@ -89,6 +90,7 @@ router.post('/PRODA-activate-device', function (req, res, next) {
         })
         .catch(error => {
             console.error(error)
+            res.status(error.response.status || 500);
             res.send(error.response.data)
         })
 
