@@ -42,7 +42,7 @@ router.post('/PRODA-produce-OAuth', function (req, res, next) {
 
 router.post('/PRODA-activate-device', function (req, res, next) {
 
-    let domain = req.body.mode === 'Live' ? 'https://proda.humanservices.gov.au' : 'https://vnd.proda.humanservices.gov.au';
+    let domain = req.body.mode === 'Live' ? 'https://5.rsp.humanservices.gov.au' : 'https://test.5.rsp.humanservices.gov.au';
 
     let endpoint = domain + '/piaweb/api/b2b/v1' +
         (req.body.isRefresh === 'true' ? ('/orgs/' + req.body.orgId) : '') +
