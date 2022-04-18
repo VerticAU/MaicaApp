@@ -2,15 +2,16 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios');
 const {log} = require("debug");
+const { randomUUID } = require('crypto');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Maica App'});
 });
 
-router.post('/produceOAuthProduceOAuth', function (req, res, next) {
+router.post('/PRODA-produce-OAuth', function (req, res, next) {
 
-    let domain = req.body.mode === 'live' ? 'https://proda.humanservices.gov.au' : 'https://vnd.proda.humanservices.gov.au';
+    let domain = req.body.mode === 'Live' ? 'https://proda.humanservices.gov.au' : 'https://vnd.proda.humanservices.gov.au';
 
     let clientId = req.body.clientId;
     let assertion = req.body.assertion;
@@ -22,13 +23,71 @@ router.post('/produceOAuthProduceOAuth', function (req, res, next) {
     console.log(body);
 
     axios({
-            method: 'post',
-            url: endpoint,
-            data: body,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
+        method: 'post',
+        url: endpoint,
+        data: body,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+        .then(resp => {
+            res.send(resp.data)
         })
+        .catch(error => {
+            console.error(error)
+            res.send(error)
+        })
+
+});
+
+router.post('/PRODA-activate-device', function (req, res, next) {
+
+    let domain = req.body.mode === 'Live' ? 'https://proda.humanservices.gov.au' : 'https://vnd.proda.humanservices.gov.au';
+
+    let endpoint = domain + '/piaweb/api/b2b/v1' +
+        (req.body.isRefresh === 'true' ? ('/orgs/' + req.body.orgId) : '') +
+        '/devices/' + req.body.deviceName + '/jwk'
+
+    let headers = {
+        'Content-Type': 'application/json',
+        'dhs-auditId': req.body.orgId,
+        'dhs-auditIdType': 'http://ns.humanservices.gov.au/audit/type/proda/organisation',
+        'dhs-subjectId': req.body.deviceName,
+        'dhs-subjectIdType': 'http://ns.humanservices.gov.au/audit/type/proda/device',
+        'dhs-messageId': 'urn:uuid:' + randomUUID(),
+        'dhs-correlationId': 'uuid:' + randomUUID(),
+        'dhs-productId': 'Maica-Salesforce' + (req.body.mode != 'Live' ? '-Sandbox' : '')
+    }
+
+    let data = {
+        'kty': 'RSA',
+        'e': 'AQAB',
+        'use': 'sig',
+        'kid': req.body.deviceName,
+        'alg': 'RS256',
+        'n': req.body.publicKey
+    }
+
+    let body;
+
+    if(req.body.isRefresh === 'true'){
+        body = data;
+    } else {
+        body = {
+            'orgId': req.body.orgId,
+            'otac': req.body.activationCode,
+            'key': data
+        }
+    }
+
+    console.log(body);
+
+    axios({
+        method: 'put',
+        url: endpoint,
+        data: body,
+        headers: headers
+    })
         .then(resp => {
             res.send(resp.data)
         })
@@ -49,14 +108,14 @@ req.setMethod('PUT');
                 '/devices/' + settings.Device_Name__c + '/jwk'
         );
 
-        req.setHeader('Content-Type', 'application/json');
-        req.setHeader('dhs-auditId', settings.Organisation_ID__c);
-        req.setHeader('dhs-auditIdType', 'http://ns.humanservices.gov.au/audit/type/proda/organisation');
-        req.setHeader('dhs-subjectId', settings.Device_Name__c);
-        req.setHeader('dhs-subjectIdType', 'http://ns.humanservices.gov.au/audit/type/proda/device');
-        req.setHeader('dhs-messageId', 'urn:uuid:' + vertic_Utils.strings.newUuid());
-        req.setHeader('dhs-correlationId', 'uuid:' + vertic_Utils.strings.newUuid());
-        req.setHeader('dhs-productId', 'Maica-Salesforce' + (vertic_Utils.orgs.isSandbox() ? '-Sandbox' : ''));
+        'Content-Type', 'application/json');
+        'dhs-auditId', settings.Organisation_ID__c);
+        'dhs-auditIdType', 'http://ns.humanservices.gov.au/audit/type/proda/organisation');
+        'dhs-subjectId', settings.Device_Name__c);
+        'dhs-subjectIdType', 'http://ns.humanservices.gov.au/audit/type/proda/device');
+        'dhs-messageId', 'urn:uuid:' + vertic_Utils.strings.newUuid());
+        'dhs-correlationId', 'uuid:' + vertic_Utils.strings.newUuid());
+        'dhs-productId', 'Maica-Salesforce' + (vertic_Utils.orgs.isSandbox() ? '-Sandbox' : ''));
 
         vertic_DTO keyDTO = new vertic_DTO();
         keyDTO.put('kty', 'RSA');
