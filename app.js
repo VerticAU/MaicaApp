@@ -28,7 +28,9 @@ app.use(function (req, res, next) {
     console.log('env token', accessToken);
 
     if(accessToken !== req.token){
-        res.send('Access Denied!');
+        res.send({
+            'error_description': 'Access Denied!'
+        });
         res.status(400).end();
     } else {
         next();
