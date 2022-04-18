@@ -28,10 +28,10 @@ app.use(function (req, res, next) {
     console.log('env token', accessToken);
 
     if(accessToken !== req.token){
+        res.status(401);
         res.send({
-            'error_description': 'Access Denied!'
+            'error_description': 'Access Denied. Please contact your system administrator.'
         });
-        res.status(400).end();
     } else {
         next();
     }
