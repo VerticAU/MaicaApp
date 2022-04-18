@@ -1,5 +1,5 @@
 {
-  "name": "maicaproxy",
+  "name": "maica-app",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VerticAU/MaicaProxy.git"
+    "url": "git+https://github.com/VerticAU/MaicaApp.git"
   },
   "dependencies": {
     "axios": "^0.26.1",

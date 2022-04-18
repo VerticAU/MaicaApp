@@ -5,7 +5,7 @@ const {log} = require("debug");
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Maica Proxy'});
+    res.render('index', {title: 'Maica App'});
 });
 
 router.post('/produceOAuthProduceOAuth', function (req, res, next) {
