@@ -38,6 +38,12 @@ app.use(function (req, res, next) {
 
 });
 
+app.use(function (req, res, next) {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('Cache-Control', 'no-cache');
+    next();
+});
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -57,12 +63,6 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error');
-});
-
-app.use(function (req, res, next) {
-    res.headers.set('X-Content-Type-Options', 'nosniff');
-    res.headers.set('Cache-Control', 'no-cache');
-    next();
 });
 
 app.disable('x-powered-by');
