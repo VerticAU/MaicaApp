@@ -59,4 +59,12 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
+app.use(function (req, res, next) {
+    res.headers.set('X-Content-Type-Options', 'nosniff');
+    res.headers.set('Cache-Control', 'no-cache');
+    next();
+});
+
+app.disable('x-powered-by');
+
 module.exports = app;
